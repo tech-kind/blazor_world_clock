@@ -1,4 +1,6 @@
-﻿@foreach(var clock in this.Clocks)
+﻿@inject ClockService ClockService
+
+@foreach(var clock in this.Clocks)
 {
     <div @key="clock.Id" class="clock">
         <div class="name">
@@ -14,11 +16,48 @@
     </div>
 }
 
+<div class="clock form">
+    <EditForm Model="this.NewClock" OnValidSubmit="OnOK">
+        <DataAnnotationsValidator />
+        <div class="name">
+            <span class="caption">表示名</span>
+            <span class="input-field">
+                <input type="text" @bind="this.NewClock.Name" autofocus />
+            </span>
+        </div>
+        <div class="time-zone">
+            <span class="caption">タイムゾーン</span>
+            <span class="input-field">
+                <select @bind="this.NewClock.TimeZoneId">
+                    @foreach (var zone in TimeZoneInfo.GetSystemTimeZones())
+                    {
+                        <option value="@zone.Id">@zone</option>
+                    }
+                </select>
+            </span>
+        </div>
+        <div class="error-message">
+            <ValidationSummary></ValidationSummary>
+        </div>
+        <div class="actions">
+            <button class="button">OK</button>
+        </div>
+    </EditForm>
+</div>
+
 
 @code {
-    Clock[] Clocks = {
-        new() {Name = "札幌", TimeZoneId = "Asia/Tokyo"},
-        new() {Name = "バンコク", TimeZoneId = "Asia/Bangkok"},
-        new() {Name = "シアトル", TimeZoneId = "America/Los_Angeles"},
-    };
+    private Clock NewClock = new();
+    private IEnumerable<Clock> Clocks = Enumerable.Empty<Clock>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        this.Clocks = await this.ClockService.GetClocksAsync();
+    }
+
+    private async Task OnOK()
+    {
+        await this.ClockService.AddClockAsync(this.NewClock);
+        this.NewClock = new();
+    }
 }
