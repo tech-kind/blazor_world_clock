@@ -1,0 +1,24 @@
+﻿@foreach(var clock in this.Clocks)
+{
+    <div @key="clock.Id" class="clock">
+        <div class="name">
+            <span class="value">@clock.Name</span>
+        </div>
+        <div class="current-time">
+            <span class="value">@clock.GetCurrentTime().ToString("MM/dd HH:mm:ss")</span>
+        </div>
+        <div class="time-zone">
+            <span class="caption">タイムゾーン</span>
+            <span class="value">@clock.TimeZoneId</span>
+        </div>
+    </div>
+}
+
+
+@code {
+    Clock[] Clocks = {
+        new() {Name = "札幌", TimeZoneId = "Asia/Tokyo"},
+        new() {Name = "バンコク", TimeZoneId = "Asia/Bangkok"},
+        new() {Name = "シアトル", TimeZoneId = "America/Los_Angeles"},
+    };
+}
