@@ -1,0 +1,13 @@
+﻿@page "/addnew"
+@inject ClockService ClockService
+@inject NavigationManager NavigationManager
+
+<ClockForm Item="new()" OnClickOK="this.OnOK"></ClockForm>
+
+@code {
+    async Task OnOK(Clock newClock)
+    {
+        await this.ClockService.AddClockAsync(newClock);
+        this.NavigationManager.NavigateTo("./");
+    }
+}
